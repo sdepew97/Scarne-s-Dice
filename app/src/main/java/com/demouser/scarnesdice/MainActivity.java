@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
         rollButton.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v) {
-                if (userOverallScore >= WINNING_SCORE || computerOverallScore >= WINNING_SCORE)
+                if (checkForWinner())
                 {
-                    announceWinner();
+                    //Done
                 }
                 else
                 {
@@ -146,9 +146,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //Before the computer goes, check if a winner must be announced
-                if (userOverallScore >= WINNING_SCORE || computerOverallScore >= WINNING_SCORE)
+                if(checkForWinner())
                 {
-                    announceWinner();
+                    //Done
                 }
                 else
                 {
@@ -196,9 +196,19 @@ public class MainActivity extends AppCompatActivity {
         holdButton.setEnabled(true);
 
         //Before the computer ends, check if a winner must be announced
+        checkForWinner();
+    }
+
+    private boolean checkForWinner()
+    {
         if (userOverallScore >= WINNING_SCORE || computerOverallScore >= WINNING_SCORE)
         {
             announceWinner();
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
