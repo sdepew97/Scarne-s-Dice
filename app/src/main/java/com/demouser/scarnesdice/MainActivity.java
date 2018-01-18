@@ -194,6 +194,12 @@ public class MainActivity extends AppCompatActivity {
         //Re-enable buttons
         rollButton.setEnabled(true);
         holdButton.setEnabled(true);
+
+        //Before the computer ends, check if a winner must be announced
+        if (userOverallScore >= WINNING_SCORE || computerOverallScore >= WINNING_SCORE)
+        {
+            announceWinner();
+        }
     }
 
     private void announceWinner() {

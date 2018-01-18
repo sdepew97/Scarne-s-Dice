@@ -2,30 +2,30 @@
 <instant-run
     abi="x86"
     api-level="27"
-    build-mode="COLD"
+    build-mode="HOT_WARM"
     density="420dpi"
     format="10"
     plugin-version="3.0.1"
-    timestamp="1516292889499"
+    timestamp="1516293450503"
     token="-8700779600071367374"
-    verifier="METHOD_DELETED" >
+    verifier="COMPATIBLE" >
 
     <task
         name="javac"
-        duration="79" />
+        duration="64" />
     <task
         name="instant-run-dex"
-        duration="0" />
+        duration="40" />
     <task
         name="instant-run-transform"
-        duration="22" />
+        duration="26" />
     <task
         name="verifier"
-        duration="2" />
+        duration="1" />
 
     <artifact
-        location="/Users/demouser/Desktop/ScarnesDice/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
-        type="SPLIT" />
+        location="/Users/demouser/Desktop/ScarnesDice/app/build/intermediates/reload-dex/debug/classes.dex"
+        type="RELOAD_DEX" />
 
     <build
         build-mode="FULL"
@@ -70,11 +70,19 @@
     </build>
     <build
         build-mode="COLD"
-        timestamp="1516292889499"
-        verifier="METHOD_DELETED" >
+        timestamp="1516293351143"
+        verifier="FIELD_ADDED" >
         <artifact
             location="/Users/demouser/Desktop/ScarnesDice/app/build/intermediates/split-apk/debug/slices/slice_8.apk"
             type="SPLIT" />
+    </build>
+    <build
+        build-mode="HOT_WARM"
+        timestamp="1516293450503"
+        verifier="COMPATIBLE" >
+        <artifact
+            location="/Users/demouser/Desktop/ScarnesDice/app/build/intermediates/reload-dex/debug/classes.dex"
+            type="RELOAD_DEX" />
     </build>
 
 </instant-run>
