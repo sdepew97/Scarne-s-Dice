@@ -3,7 +3,6 @@ package com.demouser.scarnesdice;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int NUM_SIDES_DICE = 6;
     private int MAX_NUM_COMPUTER_TURNS = 4;
+    private int WINNING_SCORE = 20;
+    private int DELAY = 1000;
+    private int COMPUTER_ROLLED_ONE = 0;
+    private int COMPUTER_HOLDS = 1;
 
     //Global variables
     private int userOverallScore = 0;
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         rollButton.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v) {
-                if (userOverallScore >= 100 || computerOverallScore >= 100)
+                if (userOverallScore >= WINNING_SCORE || computerOverallScore >= WINNING_SCORE)
                 {
                     announceWinner();
                 }
@@ -107,11 +110,6 @@ public class MainActivity extends AppCompatActivity {
         return "Your score: " + userScore + " Computer score: " + computerScore + message;
     }
 
-    private String updateTitleRoll(int userScore, int computerScore, String message)
-    {
-        return "Your score: " + userScore + " Computer score: " + computerScore + message;
-    }
-
     private int rollDice()
     {
         Random random = new Random();
@@ -148,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //Before the computer goes, check if a winner must be announced
-                if (userOverallScore >= 100 || computerOverallScore >= 100)
+                if (userOverallScore >= WINNING_SCORE || computerOverallScore >= WINNING_SCORE)
                 {
                     announceWinner();
                 }
@@ -166,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                             //Computer rolled a 1
                             computerTurnScore = 0;
                             scoreText.setText(updateComputerTitle(userOverallScore, computerOverallScore, computerTurnScore));
-                            computerDone(0);
+                            computerDone(COMPUTER_ROLLED_ONE);
                         }
                         else
                         {
@@ -178,11 +176,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        computerDone(1);
+                        computerDone(COMPUTER_HOLDS);
                     }
                 }
             }
-        }, 1000);
+        }, DELAY);
     }
 
     private void computerDone(int index)
@@ -197,62 +195,13 @@ public class MainActivity extends AppCompatActivity {
         rollButton.setEnabled(true);
         holdButton.setEnabled(true);
     }
-/*
-    private void computerTurn() {
-        //Before the computer goes, check if a winner must be announced
-        if (userOverallScore >= 100 || computerOverallScore >= 100)
-        {
-            announceWinner();
-        }
-        else
-        {
-            rollButton.setEnabled(false);
-            holdButton.setEnabled(false);
-
-            while (computerTurnScore < 20)
-            {
-                int rollValue = rollDice();
-
-                if (rollValue == 1)
-                {
-                    //Computer rolled a 1
-                    computerTurnScore = 0;
-                    scoreText.setText(updateTitle(userOverallScore, computerOverallScore, computerTurnScore));
-                    break;
-                }
-                else
-                {
-                    //Computer did not roll a one...
-                    computerTurnScore += rollValue;
-                    scoreText.setText(updateTitle(userOverallScore, computerOverallScore, computerTurnScore));
-                }
-            }
-            //Computer holds if we have a value >0
-            if (computerTurnScore > 0) {
-                scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer holds"));
-            }
-            else
-            {
-                scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer rolled a one"));
-            }
-
-            computerOverallScore += computerTurnScore;
-            computerTurnScore = 0;
-
-            scoreText.setText(updateTitle(userOverallScore, computerOverallScore, computerTurnScore));
-
-            //Re-enable buttons
-            rollButton.setEnabled(true);
-            holdButton.setEnabled(true);
-        }
-    }*/
 
     private void announceWinner() {
         rollButton.setEnabled(false);
         holdButton.setEnabled(false);
         resetButton.setEnabled(true);
 
-        if(userOverallScore>=100 && computerOverallScore>=100)
+        if(userOverallScore>=WINNING_SCORE && computerOverallScore>=WINNING_SCORE)
         {
             if(userOverallScore>computerOverallScore)
             {
@@ -265,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            if (userOverallScore >= 100)
+            if (userOverallScore >= WINNING_SCORE)
             {
                 scoreText.setText("The user won!!");
             }
