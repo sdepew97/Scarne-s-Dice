@@ -1,1 +1,1 @@
-# Scarne-s-Dice
+# Scarne's Dice
