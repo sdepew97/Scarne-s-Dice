@@ -1,5 +1,6 @@
 package com.demouser.scarnesdice;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +20,14 @@ public class MainActivity extends AppCompatActivity {
     private Button resetButton;
 
     private int NUM_SIDES_DICE = 6;
+    private int MAX_NUM_COMPUTER_TURNS = 4;
 
     //Global variables
     private int userOverallScore = 0;
     private int userTurnScore = 0;
     private int computerOverallScore = 0;
     private int computerTurnScore = 0;
+    private int numRolls = 0;
 
     //Images for dice
     private Integer[] dicePictures = {R.drawable.dice1, R.drawable.dice2, R.drawable.dice3, R.drawable.dice4, R.drawable.dice5, R.drawable.dice6};
@@ -50,22 +53,21 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    scoreText.setText(updateTitle(userOverallScore, computerOverallScore, userTurnScore));
+                    scoreText.setText(updateUserTitle(userOverallScore, computerOverallScore, userTurnScore));
                     int rollValue = rollDice();
 
                     //set the user turn score value appropriately
                     if (rollValue == 1) {
                         userTurnScore = 0;
-                        scoreText.setText(updateTitle(userOverallScore, computerOverallScore, userTurnScore));
+                        scoreText.setText(updateUserTitle(userOverallScore, computerOverallScore, userTurnScore));
                         computerTurn();
                     } else {
                         userTurnScore += rollValue;
-                        scoreText.setText(updateTitle(userOverallScore, computerOverallScore, userTurnScore));
+                        scoreText.setText(updateUserTitle(userOverallScore, computerOverallScore, userTurnScore));
                     }
                 }
             }
         });
-
 
         //Handler for hold button
         holdButton.setOnClickListener(new View.OnClickListener()
@@ -87,9 +89,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String updateTitle(int userScore, int computerScore, int currentValue)
+    private String updateUserTitle(int userScore, int computerScore, int currentValue)
     {
         return "Your score: " + userScore + " Computer score: " + computerScore + " Your score: " + currentValue;
+    }
+
+    private String updateComputerTitle(int userScore, int computerScore, int currentValue)
+    {
+        return "Your score: " + userScore + " Computer score: " + computerScore + " Computer's score: " + currentValue;
     }
 
     private String updateTitleRoll(int userScore, int computerScore, String message)
@@ -110,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     {
         userOverallScore += userTurnScore;
         userTurnScore = 0;
-        scoreText.setText(updateTitle(userOverallScore, computerOverallScore, userTurnScore));
+        scoreText.setText(updateUserTitle(userOverallScore, computerOverallScore, userTurnScore));
     }
 
     private void reset()
@@ -124,56 +131,65 @@ public class MainActivity extends AppCompatActivity {
         userTurnScore = 0;
         computerOverallScore = 0;
         computerTurnScore = 0;
-        scoreText.setText(updateTitle(userOverallScore, computerOverallScore, userTurnScore));
+        scoreText.setText(updateUserTitle(userOverallScore, computerOverallScore, userTurnScore));
     }
 
     private void computerTurn() {
-        //Before the computer goes, check if a winner must be announced
-        if (userOverallScore >= 100 || computerOverallScore >= 100)
-        {
-            announceWinner();
-        }
-        else
-        {
-            rollButton.setEnabled(false);
-            holdButton.setEnabled(false);
-
-            while (computerTurnScore < 20)
-            {
-                int rollValue = rollDice();
-
-                if (rollValue == 1)
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Before the computer goes, check if a winner must be announced
+                if (userOverallScore >= 100 || computerOverallScore >= 100)
                 {
-                    //Computer rolled a 1
-                    computerTurnScore = 0;
-                    scoreText.setText(updateTitle(userOverallScore, computerOverallScore, computerTurnScore));
-                    break;
+                    announceWinner();
                 }
                 else
                 {
-                    //Computer did not roll a one...
-                    computerTurnScore += rollValue;
-                    scoreText.setText(updateTitle(userOverallScore, computerOverallScore, computerTurnScore));
+                    rollButton.setEnabled(false);
+                    holdButton.setEnabled(false);
+
+                    if(numRolls < MAX_NUM_COMPUTER_TURNS) {
+                        //Roll dice...
+                        int rollValue = rollDice();
+                        numRolls++;
+
+                        if (rollValue == 1) {
+                            //Computer rolled a 1
+                            computerTurnScore = 0;
+                            scoreText.setText(updateComputerTitle(userOverallScore, computerOverallScore, computerTurnScore));
+                            scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer rolled a one"));
+                            computerDone();
+                        }
+                        else
+                        {
+                            //Computer did not roll a one...
+                            computerTurnScore += rollValue;
+                            scoreText.setText(updateComputerTitle(userOverallScore, computerOverallScore, computerTurnScore));
+                            computerTurn();
+                        }
+                    }
+                    else
+                    {
+                        scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer holds"));
+                        computerDone();
+                    }
                 }
             }
-            //Computer holds if we have a value >0
-            if (computerTurnScore > 0) {
-                scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer holds"));
-            }
-            else
-            {
-                scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer rolled a one"));
-            }
+        }, 1000);
+    }
 
-            computerOverallScore += computerTurnScore;
-            computerTurnScore = 0;
+    private void computerDone()
+    {
+        numRolls = 0;
+        computerOverallScore += computerTurnScore;
+        computerTurnScore = 0;
 
-            scoreText.setText(updateTitle(userOverallScore, computerOverallScore, computerTurnScore));
+        scoreText.setText(updateComputerTitle(userOverallScore, computerOverallScore, computerTurnScore));
 
-            //Re-enable buttons
-            rollButton.setEnabled(true);
-            holdButton.setEnabled(true);
-        }
+        //Re-enable buttons
+        rollButton.setEnabled(true);
+        holdButton.setEnabled(true);
     }
 /*
     private void computerTurn() {
