@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     //Images for dice
     private Integer[] dicePictures = {R.drawable.dice1, R.drawable.dice2, R.drawable.dice3, R.drawable.dice4, R.drawable.dice5, R.drawable.dice6};
 
+    //Messages for computer rolling
+    private String[] messages = {" Computer rolled a one", " Computer holds"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
         return "Your score: " + userScore + " Computer score: " + computerScore + " Computer's score: " + currentValue;
     }
 
+    private String updateComputerMove(int userScore, int computerScore, String message)
+    {
+        return "Your score: " + userScore + " Computer score: " + computerScore + message;
+    }
+
     private String updateTitleRoll(int userScore, int computerScore, String message)
     {
         return "Your score: " + userScore + " Computer score: " + computerScore + message;
@@ -158,8 +166,7 @@ public class MainActivity extends AppCompatActivity {
                             //Computer rolled a 1
                             computerTurnScore = 0;
                             scoreText.setText(updateComputerTitle(userOverallScore, computerOverallScore, computerTurnScore));
-                            scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer rolled a one"));
-                            computerDone();
+                            computerDone(0);
                         }
                         else
                         {
@@ -171,21 +178,20 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        scoreText.setText(updateTitleRoll(userOverallScore, computerOverallScore, " Computer holds"));
-                        computerDone();
+                        computerDone(1);
                     }
                 }
             }
         }, 1000);
     }
 
-    private void computerDone()
+    private void computerDone(int index)
     {
         numRolls = 0;
         computerOverallScore += computerTurnScore;
         computerTurnScore = 0;
 
-        scoreText.setText(updateComputerTitle(userOverallScore, computerOverallScore, computerTurnScore));
+        scoreText.setText(updateComputerMove(userOverallScore, computerOverallScore, messages[index]));
 
         //Re-enable buttons
         rollButton.setEnabled(true);
